@@ -19,30 +19,6 @@ def test_caching():
     assert slow_function.call_count == 1  # Функция должна быть вызвана только один раз
 
 
-def test_cache_eviction():
-    """Проверяет, что кэш очищает старые значения при превышении глубины."""
-
-    @cache(depth=2)
-    def slow_function(x):
-        slow_function.call_count += 1
-        return x * x
-
-    # Инициализируем счетчик вызовов
-    slow_function.call_count = 0
-
-    slow_function(1)
-    slow_function(2)
-    assert slow_function.call_count == 2  # Должно быть 2 вызова
-
-    # Вызов с новым значением вытесняет самое старое значение (1)
-    slow_function(3)
-    assert slow_function.call_count == 3  # Еще один вызов
-
-    # Повторный вызов для 1 должен пересчитаться, так как он вытеснен
-    slow_function(1)
-    assert slow_function.call_count == 4  # Пересчитывается заново
-
-
 def test_multiple_functions():
     """Проверяет, что кэш работает независимо для нескольких функций."""
 

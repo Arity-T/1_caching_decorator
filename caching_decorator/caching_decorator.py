@@ -23,20 +23,21 @@ def cache(depth=10, policy="LRU"):
             key = (*args, *kwargs.items())
 
             if key in cache:
-                if policy == "LRU":
+                if policy in ["LRU", "MRU"]:
                     access.remove(key)
                     access.append(key)
                 return cache[key]
 
+            if len(cache) + 1 > depth:
+                if policy in ["LRU", "FIFO"]:
+                    oldest_key = access.popleft()
+                elif policy in ["LIFO", "MRU"]:
+                    oldest_key = access.pop()
+                del cache[oldest_key]
+
             result = func(*args, **kwargs)
             cache[key] = result
             access.append(key)
-
-            if len(cache) > depth:
-                if policy == "LRU":
-                    oldest_key = access.popleft()
-
-                del cache[oldest_key]
 
             return result
 
